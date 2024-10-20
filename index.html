@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat Room</title>
+    <style>
+      ul { list-style-type: none; margin: 0; padding: 0; }
+      li { padding: 8px; margin-bottom: 10px; background-color: #f2f2f2; border-radius: 4px; }
+      input { padding: 10px; width: 90%; }
+      button { padding: 10px; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="chatForm" action="">
+      <input id="messageInput" autocomplete="off" placeholder="Type a message..." />
+      <button>Send</button>
+    </form>
+
+    <!-- Socket.IO client library -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      // Add a message to the message list when received
+      socket.on('chat message', function(msg) {
+        var item = document.createElement('li');
+        item.textContent = msg;
+        document.getElementById('messages').appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      // Handle form submission
+      document.getElementById('chatForm').addEventListener('submit', function(e) {
+        e.preventDefault();  // Prevent form from submitting the usual way
+        var input = document.getElementById('messageInput');
+        socket.emit('chat message', input.value);  // Send message to server
+        input.value = '';  // Clear the input field
+      });
+    </script>
+  </body>
+</html>
